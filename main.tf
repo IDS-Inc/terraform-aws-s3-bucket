@@ -9,6 +9,35 @@ module "default_label" {
   tags       = "${var.tags}"
 }
 
+resource "aws_s3_bucket" "logs" {
+  bucket        = "${module.default_label.id}.logs"
+  acl           = "log-delivery-write"
+  force_destroy = "${var.force_destroy}"
+
+  lifecycle_rule {
+    id                                     = "Remove versions after ${var.log_retention_days} days"
+    enabled                                = true
+    abort_incomplete_multipart_upload_days = 7
+
+    noncurrent_version_expiration {
+      days = "${var.log_retention_days}"
+    }
+
+    expiration {
+      expired_object_delete_marker = true
+    }
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        kms_master_key_id = "${var.kms_master_key_id}"
+        sse_algorithm     = "${var.sse_algorithm}"
+      }
+    }
+  }
+}
+
 resource "aws_s3_bucket" "default" {
   count         = "${var.enabled == "true" ? 1 : 0}"
   bucket        = "${module.default_label.id}"
@@ -19,6 +48,25 @@ resource "aws_s3_bucket" "default" {
 
   versioning {
     enabled = "${var.versioning_enabled}"
+  }
+
+  logging {
+    target_bucket = "${aws_s3_bucket.logs.id}"
+    target_prefix = "${module.default_label.id}-s3/"
+  }
+
+  lifecycle_rule {
+    id                                     = "Remove versions after ${var.version_retention_days} days"
+    enabled                                = true
+    abort_incomplete_multipart_upload_days = 7
+
+    noncurrent_version_expiration {
+      days = "${var.version_retention_days}"
+    }
+
+    expiration {
+      expired_object_delete_marker = true
+    }
   }
 
   # https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html
@@ -32,7 +80,8 @@ resource "aws_s3_bucket" "default" {
     }
   }
 
-  tags = "${module.default_label.tags}"
+  depends_on = ["aws_s3_bucket.logs"]
+  tags       = "${module.default_label.tags}"
 }
 
 module "s3_user" {

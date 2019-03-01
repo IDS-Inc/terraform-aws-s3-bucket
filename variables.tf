@@ -67,6 +67,18 @@ variable "sse_algorithm" {
   description = "The server-side encryption algorithm to use. Valid values are `AES256` and `aws:kms`"
 }
 
+variable "version_retention_days" {
+  type        = "string"
+  default     = "365"
+  description = "Object Expiration function allows you to define rules to schedule the removal of your objects after a pre-defined time period"
+}
+
+variable "log_retention_days" {
+  type        = "string"
+  default     = "365"
+  description = "Object Expiration function allows you to define rules to schedule the removal of your objects after a pre-defined time period"
+}
+
 variable "kms_master_key_id" {
   type        = "string"
   default     = ""
