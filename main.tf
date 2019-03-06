@@ -84,18 +84,6 @@ resource "aws_s3_bucket" "default" {
   tags       = "${module.default_label.tags}"
 }
 
-#module "s3_user" {
-#  source       = "git::https://github.com/cloudposse/terraform-aws-iam-s3-user.git?ref=tags/0.3.1"
-#  namespace    = "${var.namespace}"
-#  stage        = "${var.stage}"
-#  name         = "${var.name}"
-#  attributes   = "${var.attributes}"
-#  tags         = "${var.tags}"
-#  enabled      = "${var.enabled == "true" && var.user_enabled == "true" ? "true" : "false"}"
-#  s3_actions   = ["${var.allowed_bucket_actions}"]
-#  s3_resources = ["${join("", aws_s3_bucket.default.*.arn)}/*", "${join("", aws_s3_bucket.default.*.arn)}"]
-#}
-
 data "aws_iam_policy_document" "bucket_policy" {
   count = "${var.enabled == "true" && var.allow_encrypted_uploads_only == "true" ? 1 : 0}"
 
