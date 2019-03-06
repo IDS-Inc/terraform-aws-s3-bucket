@@ -85,7 +85,7 @@ resource "aws_s3_bucket" "default" {
 }
 
 module "s3_user" {
-  source       = "git::https://github.com/IDS-Inc/terraform-aws-iam-system-user.git?ref=master"
+  source       = "git::https://github.com/IDS-Inc/terraform-aws-iam-s3-user.git?ref=master"
   namespace    = "${var.namespace}"
   stage        = "${var.stage}"
   name         = "${var.name}"
