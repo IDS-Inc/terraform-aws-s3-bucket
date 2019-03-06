@@ -1,5 +1,5 @@
 module "default_label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.3"
+  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.6.2"
   enabled    = "${var.enabled}"
   namespace  = "${var.namespace}"
   stage      = "${var.stage}"
@@ -82,6 +82,18 @@ resource "aws_s3_bucket" "default" {
 
   depends_on = ["aws_s3_bucket.logs"]
   tags       = "${module.default_label.tags}"
+}
+
+module "s3_user" {
+  source       = "git::https://github.com/cloudposse/terraform-aws-iam-s3-user.git?ref=tags/0.3.1"
+  namespace    = "${var.namespace}"
+  stage        = "${var.stage}"
+  name         = "${var.name}"
+  attributes   = "${var.attributes}"
+  tags         = "${var.tags}"
+  enabled      = "${var.enabled == "true" && var.user_enabled == "true" ? "true" : "false"}"
+  s3_actions   = ["${var.allowed_bucket_actions}"]
+  s3_resources = ["${join("", aws_s3_bucket.default.*.arn)}/*", "${join("", aws_s3_bucket.default.*.arn)}"]
 }
 
 data "aws_iam_policy_document" "bucket_policy" {
