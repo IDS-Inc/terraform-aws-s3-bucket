@@ -69,13 +69,13 @@ variable "sse_algorithm" {
 
 variable "version_retention_days" {
   type        = "string"
-  default     = "365"
+  default     = "90"
   description = "Object Expiration function allows you to define rules to schedule the removal of your objects after a pre-defined time period"
 }
 
 variable "log_retention_days" {
   type        = "string"
-  default     = "365"
+  default     = "90"
   description = "Object Expiration function allows you to define rules to schedule the removal of your objects after a pre-defined time period"
 }
 
@@ -107,4 +107,19 @@ variable "allow_encrypted_uploads_only" {
   type        = "string"
   default     = "false"
   description = "Set to `true` to prevent uploads of unencrypted objects to S3 bucket"
+}
+
+variable "noncurrent_version_transition_days" {
+  description = "Specifies when noncurrent object versions transitions"
+  default     = "30"
+}
+
+variable "standard_transition_days" {
+  description = "Number of days to persist in the standard storage tier before moving to the infrequent access tier"
+  default     = "30"
+}
+
+variable "glacier_transition_days" {
+  description = "Number of days after which to move the data to the glacier storage tier"
+  default     = "60"
 }

@@ -36,6 +36,7 @@ resource "aws_s3_bucket" "logs" {
       }
     }
   }
+  tags       = "${module.default_label.tags}"
 }
 
 resource "aws_s3_bucket" "default" {
@@ -64,9 +65,25 @@ resource "aws_s3_bucket" "default" {
       days = "${var.version_retention_days}"
     }
 
+    noncurrent_version_transition {
+      days          = "${var.noncurrent_version_transition_days}"
+      storage_class = "GLACIER"
+    }
+
+    transition {
+      days          = "${var.standard_transition_days}"
+      storage_class = "STANDARD_IA"
+    }
+
+    transition {
+      days          = "${var.glacier_transition_days}"
+      storage_class = "GLACIER"
+    }
+
     expiration {
       expired_object_delete_marker = true
     }
+    tags       = "${module.default_label.tags}"
   }
 
   # https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html
