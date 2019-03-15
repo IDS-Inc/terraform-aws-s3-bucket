@@ -83,7 +83,6 @@ resource "aws_s3_bucket" "default" {
     expiration {
       expired_object_delete_marker = true
     }
-    tags       = "${module.default_label.tags}"
   }
 
   # https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html
