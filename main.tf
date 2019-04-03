@@ -163,13 +163,13 @@ data "aws_iam_policy_document" "default_bucket_policy" {
   count = "${var.enabled == "true" && var.allow_datadog_lambda_logging == "true" ? 1 : 0}"
 
   statement {
-    sid      = "allow datadog lambda Get and List"
-    effect   = "Allow"
-    action   = [
+    sid       = "allow datadog lambda Get and List"
+    effect    = "Allow"
+    actions   = [
       "s3:Get*",
       "s3:List*",
     ]
-    resource = [
+    resources = [
       "arn:aws:s3:::${aws_s3_bucket.default.id}",
       "arn:aws:s3:::${aws_s3_bucket.default.id}/*",
     ]
@@ -192,13 +192,13 @@ data "aws_iam_policy_document" "log_bucket_policy" {
   count = "${var.enabled == "true" && var.allow_datadog_lambda_logging == "true" ? 1 : 0}"
 
   statement {
-    sid      = "allow datadog lambda Get and List"
-    effect   = "Allow"
-    action   = [
+    sid       = "allow datadog lambda Get and List"
+    effect    = "Allow"
+    actions   = [
       "s3:Get*",
       "s3:List*",
     ]
-    resource = [
+    resources = [
       "arn:aws:s3:::${aws_s3_bucket.logs.id}",
       "arn:aws:s3:::${aws_s3_bucket.logs.id}/*",
     ]
