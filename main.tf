@@ -152,9 +152,44 @@ data "aws_iam_policy_document" "bucket_policy" {
   }
 }
 
-resource "aws_s3_bucket_policy" "default" {
+resource "aws_s3_bucket_policy" "force_encrypted" {
   count  = "${var.enabled == "true" && var.allow_encrypted_uploads_only == "true" ? 1 : 0}"
   bucket = "${join("", aws_s3_bucket.default.*.id)}"
 
   policy = "${join("", data.aws_iam_policy_document.bucket_policy.*.json)}"
+}
+
+data "aws_iam_policy_document" "datadog_bucket_policy" {
+  count = "${var.enabled == "true" && var.allow_datadog_lambda_logging == "true" ? 1 : 0}"
+
+  statement {
+    sid      = "allow datadog lambda Get and List"
+    effect   = "Allow"
+    action   = ["s3:Get*", "s3:List*"]
+    resource = [
+      "arn:aws:s3:::${aws_s3_bucket.default.id}",
+      "arn:aws:s3:::${aws_s3_bucket.default.id}/*",
+      "arn:aws:s3:::${aws_s3_bucket.default.id}.logs",
+      "arn:aws:s3:::${aws_s3_bucket.default.id}.logs/*",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "default" {
+  count  = "${var.enabled == "true" && var.allow_datadog_lambda_logging == "true" ? 1 : 0}"
+  bucket = "${join("", aws_s3_bucket.default.*.id)}"
+
+  policy = "${join("", data.aws_iam_policy_document.datadog_bucket_policy.*.json)}"
+}
+
+resource "aws_s3_bucket_policy" "default_logs" {
+  count  = "${var.enabled == "true" && var.allow_datadog_lambda_logging == "true" ? 1 : 0}"
+  bucket = "${join("", aws_s3_bucket.default.*.id)}.logs"
+
+  policy = "${join("", data.aws_iam_policy_document.datadog_bucket_policy.*.json)}"
 }

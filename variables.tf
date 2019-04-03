@@ -109,6 +109,12 @@ variable "allow_encrypted_uploads_only" {
   description = "Set to `true` to prevent uploads of unencrypted objects to S3 bucket"
 }
 
+variable "allow_datadog_lambda_logging" {
+  type        = "string"
+  default     = "false"
+  description = "Set to `true` to allow datadogi logging lambda function access to S3 bucket"
+}
+
 variable "noncurrent_version_transition_days" {
   description = "Specifies when noncurrent object versions transitions"
   default     = "30"
