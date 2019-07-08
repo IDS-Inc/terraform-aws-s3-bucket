@@ -58,7 +58,7 @@ resource "aws_s3_bucket" "default" {
 
   lifecycle_rule {
     id                                     = "Remove versions after ${var.version_retention_days} days"
-    enabled                                = true
+    enabled                                = "${var.lifecycle_enabled}"
     abort_incomplete_multipart_upload_days = 7
 
     noncurrent_version_expiration {
