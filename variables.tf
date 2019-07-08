@@ -61,6 +61,12 @@ variable "versioning_enabled" {
   description = "A state of versioning. Versioning is a means of keeping multiple variants of an object in the same bucket."
 }
 
+variable "lifecycle_enabled" {
+  type        = "string"
+  default     = "false"
+  description = "A state of life cycle rules."
+}
+
 variable "sse_algorithm" {
   type        = "string"
   default     = "AES256"
