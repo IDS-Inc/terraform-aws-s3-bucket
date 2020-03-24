@@ -1,11 +1,13 @@
 variable "namespace" {
   type        = "string"
   description = "Namespace (e.g. `eg` or `cp`)"
+  default     = ""
 }
 
 variable "stage" {
   type        = "string"
   description = "Stage (e.g. `prod`, `dev`, `staging`)"
+  default     = ""
 }
 
 variable "name" {
