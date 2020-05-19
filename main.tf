@@ -1,16 +1,5 @@
-module "default_label" {
-  source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.3"
-  enabled    = var.enabled
-  namespace  = var.namespace
-  stage      = var.stage
-  name       = var.name
-  delimiter  = var.delimiter
-  attributes = var.attributes
-  tags       = var.tags
-}
-
 resource "aws_s3_bucket" "logs" {
-  bucket        = "${module.default_label.id}.logs"
+  bucket        = "${var.name}.logs"
   acl           = "log-delivery-write"
   force_destroy = var.force_destroy
 
@@ -36,12 +25,15 @@ resource "aws_s3_bucket" "logs" {
       }
     }
   }
-  tags = module.default_label.tags
+
+  tags = {
+    Name = var.name
+  }
 }
 
 resource "aws_s3_bucket" "default" {
   count         = var.enabled == "true" ? 1 : 0
-  bucket        = module.default_label.id
+  bucket        = var.name
   acl           = var.acl
   region        = var.region
   force_destroy = var.force_destroy
@@ -53,7 +45,7 @@ resource "aws_s3_bucket" "default" {
 
   logging {
     target_bucket = aws_s3_bucket.logs.id
-    target_prefix = "${module.default_label.id}-s3/"
+    target_prefix = "${var.name}-s3/"
   }
 
   lifecycle_rule {
@@ -96,8 +88,11 @@ resource "aws_s3_bucket" "default" {
     }
   }
 
+  tags = {
+    Name = var.name
+  }
+
   depends_on = [aws_s3_bucket.logs]
-  tags       = module.default_label.tags
 }
 
 data "aws_iam_policy_document" "bucket_policy" {
