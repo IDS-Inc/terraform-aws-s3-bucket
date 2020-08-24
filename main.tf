@@ -13,6 +13,7 @@ resource "aws_s3_bucket" "logs" {
     }
 
     expiration {
+      days = var.log_retention_days
       expired_object_delete_marker = true
     }
   }
